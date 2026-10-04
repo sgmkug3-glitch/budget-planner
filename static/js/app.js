@@ -545,8 +545,11 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (hasExpense) {
         const isOver = dailyBudget > 0 ? (spent > dailyBudget) : false;
         const badgeClass = isOver ? "badge-over" : "badge-safe";
-        const badgeIcon = isOver ? "⚠️ " : "₩";
-        const displayAmt = state.isMasked ? "••••" : (spent >= 10000 ? `${(spent/10000).toFixed(1)}만` : spent.toLocaleString("ko-KR"));
+        const displayAmt = state.isMasked 
+          ? "••••" 
+          : (spent >= 10000 
+              ? `${(spent / 10000).toFixed(spent % 10000 === 0 ? 0 : 1)}만` 
+              : `${spent.toLocaleString("ko-KR")}`);
 
         bottomBadge = `
           <div class="cal-money-badge ${badgeClass}" title="총 지출: ${formatWon(spent)} (권장: ${formatWon(dailyBudget)})">

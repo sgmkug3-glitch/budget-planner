@@ -884,7 +884,9 @@ select:focus {
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
   border-radius: 10px;
-  min-height: 74px;
+  height: 76px;
+  min-height: 76px;
+  max-height: 76px;
   padding: 6px 4px;
   display: flex;
   flex-direction: column;
@@ -894,6 +896,8 @@ select:focus {
   position: relative;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .cal-cell:hover:not(.empty) {
@@ -1675,9 +1679,75 @@ select:focus {
     flex-direction: column;
     gap: 12px;
   }
-  .cal-cell {
-    min-height: 64px;
+  /* 모바일 캘린더 전용 규격 통일 (칸이 제각각 늘어나는 현상 완벽 방지) */
+  .calendar-wrapper {
+    padding: 8px 4px !important;
+    border-radius: var(--radius-sm);
   }
+  .calendar-header-month {
+    font-size: 0.92rem;
+    margin-bottom: 8px;
+  }
+  .cal-daily-rec-info {
+    font-size: 0.75rem;
+  }
+  .calendar-days-header {
+    font-size: 0.72rem;
+    margin-bottom: 4px;
+  }
+  .calendar-grid {
+    gap: 3px !important;
+  }
+  .cal-cell {
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+    padding: 2px 2px !important;
+    border-radius: 6px !important;
+    border-width: 1px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  .cal-date-num {
+    font-size: 0.68rem !important;
+    height: 13px !important;
+    line-height: 1 !important;
+  }
+  .cal-tags-container {
+    flex-direction: row !important;
+    gap: 1px !important;
+    max-width: 22px !important;
+    overflow: hidden !important;
+  }
+  .cal-tag-fixed {
+    font-size: 0.52rem !important;
+    padding: 0 1px !important;
+    max-width: 20px !important;
+    border-radius: 2px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .cal-center-content {
+    height: 18px !important;
+    min-height: 18px !important;
+  }
+  .cal-stamp-icon {
+    font-size: 15px !important;
+  }
+  .cal-money-badge {
+    font-size: 0.58rem !important;
+    padding: 1px 1px !important;
+    border-radius: 3px !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    max-width: 100% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
   .floating-calc-btn {
     bottom: 18px;
     right: 18px;
@@ -1690,6 +1760,44 @@ select:focus {
 }
 
 @media (max-width: 480px) {
+  /* 초소형 모바일 화면 캘린더 최적화 */
+  .calendar-wrapper {
+    padding: 6px 2px !important;
+  }
+  .calendar-grid {
+    gap: 2px !important;
+  }
+  .cal-cell {
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    padding: 2px 1px !important;
+    border-radius: 4px !important;
+  }
+  .cal-date-num {
+    font-size: 0.62rem !important;
+    height: 12px !important;
+  }
+  .cal-tags-container {
+    max-width: 18px !important;
+  }
+  .cal-tag-fixed {
+    font-size: 0.48rem !important;
+    max-width: 16px !important;
+  }
+  .cal-center-content {
+    height: 14px !important;
+    min-height: 14px !important;
+  }
+  .cal-stamp-icon {
+    font-size: 12px !important;
+  }
+  .cal-money-badge {
+    font-size: 0.52rem !important;
+    padding: 0 1px !important;
+    letter-spacing: -0.3px;
+  }
+
   #btn-header-calc {
     display: none; /* 모바일에서는 하단 플로팅 계산기 버튼이 있으므로 헤더 계산기 버튼 숨김 */
   }
