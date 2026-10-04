@@ -66,6 +66,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // -----------------------------------------------------------
+  // 0-1. 모바일 및 스크롤 시 상단 헤더 슬림 축소 효과 (Compact Header)
+  // -----------------------------------------------------------
+  const appHeader = document.querySelector(".app-header");
+  if (appHeader) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 25) {
+        appHeader.classList.add("header-scrolled");
+      } else {
+        appHeader.classList.remove("header-scrolled");
+      }
+    }, { passive: true });
+  }
+
+
   const defaultFixedItems = () => [
     { id: "fixed-1", name: "🏠 월세/이자", day: 25 },
     { id: "fixed-2", name: "🍿 OTT 구독료", day: 1 },
