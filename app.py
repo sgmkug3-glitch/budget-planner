@@ -16,8 +16,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# 프로젝트 기본 디렉토리 경로 (Vercel 서버리스 배포 시 템플릿/정적 파일 경로 문제 방지)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Flask 애플리케이션 초기화
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static"),
+    static_url_path="/static"
+)
 
 # API 키 불러오기
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
