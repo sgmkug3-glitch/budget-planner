@@ -1625,61 +1625,230 @@ select:focus {
   display: none !important;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
+  /* 1. 전체 레이아웃 & 패딩 모바일 규격 최적화 */
+  .main-container {
+    padding: 0 10px;
+    margin: 12px auto;
+    gap: 16px;
+  }
+
+  .card {
+    padding: 16px 12px;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .card-header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .card-title {
+    gap: 8px;
+  }
+
+  .card-icon {
+    font-size: 18px;
+  }
+
+  .card-title h2 {
+    font-size: 1.05rem;
+  }
+
+  .step-tag {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  /* 2. 상단 헤더 규격 */
   .header-container {
-    padding: 8px 14px;
+    padding: 8px 12px;
     gap: 8px;
   }
   .logo-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 22px;
+    width: 34px;
+    height: 34px;
+    font-size: 20px;
   }
   .logo-area h1 {
     font-size: 1.05rem;
   }
   .subtitle {
-    display: none; /* 모바일에서 서브타이틀 숨김으로 헤더 비만 방지 */
+    display: none;
   }
   .header-badge {
-    display: none; /* 모바일에서 텍스트 뱃지 숨김 */
+    display: none;
   }
   .header-right {
-    gap: 5px;
+    gap: 4px;
   }
   .header-right .btn-sm {
-    padding: 4px 7px;
+    padding: 4px 6px;
     font-size: 0.75rem;
   }
 
-  /* 모바일 스크롤 시 극도로 슬림해지는 헤더 */
   .app-header.header-scrolled .header-container {
     padding: 4px 10px;
   }
   .app-header.header-scrolled .logo-icon {
-    width: 26px;
-    height: 26px;
-    font-size: 15px;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
   }
   .app-header.header-scrolled .logo-area h1 {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
   .app-header.header-scrolled .header-right .btn-sm {
     padding: 3px 5px;
     font-size: 0.72rem;
   }
 
+  /* 3. 폼 & 입력 요소 모바일 규격 (iOS 자동 줌 방지 font-size: 16px) */
   .form-grid,
   .two-column-layout,
-  .fun-section-grid,
+  .fun-section-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .form-group label {
+    font-size: 0.82rem;
+    margin-bottom: 4px;
+  }
+
+  input[type="number"],
+  input[type="text"],
+  input[type="password"],
+  input[type="date"],
+  select {
+    font-size: 16px;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
+  .input-wrapper input {
+    padding-right: 32px;
+  }
+
+  .unit {
+    right: 12px;
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 0.92rem;
+    border-radius: 8px;
+  }
+
+  /* 4. 소비 성향 라디오 카드: 모바일 맞춤 가로 행 레이아웃 */
   .radio-cards {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
+
+  .radio-content {
+    flex-direction: row;
+    text-align: left;
+    padding: 10px 14px;
+    gap: 12px;
+    border-radius: 10px;
+  }
+
+  .radio-emoji {
+    font-size: 24px;
+    margin-bottom: 0;
+  }
+
+  .radio-content strong {
+    font-size: 0.9rem;
+  }
+
+  .radio-content p {
+    font-size: 0.75rem;
+  }
+
+  /* 5. 고정지출 결제일 동적 목록 모바일 최적화 */
+  .fixed-days-dynamic-list {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .fixed-day-item {
+    width: 100%;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: 8px;
+  }
+
+  .input-fixed-name {
+    flex: 1 !important;
+    width: auto !important;
+    min-width: 80px;
+    font-size: 14px !important;
+    padding: 4px 6px !important;
+  }
+
+  .input-fixed-day-wrapper {
+    font-size: 0.8rem;
+  }
+
+  .input-fixed-day {
+    width: 40px !important;
+    font-size: 14px !important;
+    padding: 4px 2px !important;
+  }
+
+  /* 6. 요약 지표 대시보드 (2x3 균형 그리드) */
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
+  }
+
+  .summary-card {
+    padding: 10px 8px;
+    gap: 8px;
+    border-radius: 10px;
+  }
+
+  .summary-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .summary-label {
+    font-size: 0.7rem;
+  }
+
+  .summary-info h3 {
+    font-size: 0.92rem;
+  }
+
+  /* 7. 일일 지출 입력 폼 & 테이블 */
   .form-row {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
-  /* 모바일 캘린더 전용 규격 통일 (칸이 제각각 늘어나는 현상 완벽 방지) */
+
+  .expense-table {
+    min-width: 320px;
+  }
+
+  .expense-table th,
+  .expense-table td {
+    padding: 8px 6px;
+    font-size: 0.78rem;
+  }
+
+  /* 8. 캘린더 모바일 전용 정규격 통일 */
   .calendar-wrapper {
     padding: 8px 4px !important;
     border-radius: var(--radius-sm);
@@ -1748,19 +1917,102 @@ select:focus {
     text-overflow: ellipsis !important;
   }
 
-  .floating-calc-btn {
-    bottom: 18px;
-    right: 18px;
+  /* 9. 체감 소비 변환기 & 게이지 바 */
+  .feel-item {
+    padding: 10px;
+    gap: 10px;
   }
+  .feel-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+  .feel-content h4 {
+    font-size: 0.82rem;
+  }
+  .feel-calc {
+    font-size: 0.9rem;
+  }
+
+  /* 10. AI 분석 리포트 & 모달 */
+  .ai-content-body {
+    padding: 16px 12px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  .card-actions {
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .card-actions .btn {
+    width: 100%;
+  }
+
+  .lock-card {
+    width: 92%;
+    max-width: 330px;
+    padding: 28px 20px;
+    border-radius: 20px;
+  }
+
+  .pin-input-box input {
+    font-size: 1.5rem;
+    letter-spacing: 8px;
+    padding: 10px;
+  }
+
+  .date-modal-card {
+    width: 92% !important;
+    max-width: 350px !important;
+    padding: 16px 14px !important;
+  }
+
+  .date-modal-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .date-modal-actions button {
+    width: 100%;
+  }
+
+  .floating-calc-btn {
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+
   .calc-popup-card {
-    right: 18px;
-    bottom: 82px;
-    width: 280px;
+    right: 12px;
+    left: 12px;
+    bottom: 74px;
+    width: auto;
+    max-width: 320px;
+    margin: 0 auto;
   }
 }
 
 @media (max-width: 480px) {
-  /* 초소형 모바일 화면 캘린더 최적화 */
+  #btn-header-calc {
+    display: none;
+  }
+  .logo-area h1 {
+    font-size: 0.92rem;
+    max-width: 135px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .app-header.header-scrolled .logo-area h1 {
+    font-size: 0.84rem;
+    max-width: 120px;
+  }
+
   .calendar-wrapper {
     padding: 6px 2px !important;
   }
@@ -1796,20 +2048,5 @@ select:focus {
     font-size: 0.52rem !important;
     padding: 0 1px !important;
     letter-spacing: -0.3px;
-  }
-
-  #btn-header-calc {
-    display: none; /* 모바일에서는 하단 플로팅 계산기 버튼이 있으므로 헤더 계산기 버튼 숨김 */
-  }
-  .logo-area h1 {
-    font-size: 0.92rem;
-    max-width: 140px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .app-header.header-scrolled .logo-area h1 {
-    font-size: 0.84rem;
-    max-width: 125px;
   }
 }
