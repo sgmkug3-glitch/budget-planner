@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 스마트 가계부 & 자산 플래너 🐷💸</title>
+  <!-- Google Fonts: Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Markdown 렌더링용 CDN (marked.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- 커스텀 스타일시트 -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- =========================================================
+       0. 4자리 보안 잠금 화면 (PIN Lock Overlay)
+       ========================================================= -->
+  <div id="lock-screen" class="lock-overlay">
+    <div class="lock-card">
+      <div class="piggy-avatar">
+        <span class="piggy-icon">🐷</span>
+        <span class="coin-icon">🪙</span>
+      </div>
+      <h2>시크릿 자산 가계부</h2>
+      <p class="lock-sub">보안을 위해 4자리 비밀번호를 입력해 주세요.</p>
+      
+      <form id="pin-form" class="pin-form">
+        <div class="pin-input-box">
+          <input type="password" id="pin-input" maxlength="4" inputmode="numeric" placeholder="● ● ● ●" autofocus autocomplete="off">
+        </div>
+        <p id="pin-error" class="pin-error hidden">❌ 비밀번호가 올바르지 않습니다.</p>
+        <button type="submit" class="btn btn-primary full-width pin-btn">
+          🔓 가계부 열기
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 상단 네비게이션 / 헤더 -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="logo-icon">🐷</span>
+        <div>
+          <h1>AI 스마트 가계부 & 자산 플래너</h1>
+          <p class="subtitle">Gemini 3.5 Flash Lite 기반 맞춤형 자산 관리 비서</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- 저장 & 초기화 버튼 -->
+        <button id="btn-save-data" class="btn btn-secondary btn-sm" title="가계부 데이터 지금 저장하기">
+          💾 저장
+        </button>
+        <button id="btn-reset-data" class="btn btn-danger-soft btn-sm" title="가계부 데이터 전체 초기화">
+          🔄 초기화
+        </button>
+
+        <!-- 간편 계산기 열기 버튼 -->
+        <button id="btn-header-calc" class="btn btn-secondary btn-sm" title="간편 계산기 열기">
+          🧮 계산기
+        </button>
+        <!-- 지하철/카페 모드 (금액 마스킹 눈 버튼) -->
+        <button id="btn-toggle-mask" class="btn btn-secondary btn-sm" title="지하철/카페 모드 (금액 숨김)">
+          👁️ 금액 숨김
+        </button>
+        <div class="header-badge">
+          <span class="badge-dot"></span>
+          <span id="ai-status-text">AI 엔진 준비 완료 🤖</span>
+        </div>
+        <button id="btn-lock-app" class="btn btn-secondary btn-sm" title="가계부 다시 잠그기">
+          🔒 잠금
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- 1. 기본 재정 설정 카드 (Form) -->
+    <section class="card budget-config-card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon">💰</span>
+          <h2>기본 재정 및 예산 설계</h2>
+        </div>
+        <div class="card-sub-info">
+          <span id="auto-save-hint" class="save-status-text">💾 자동 저장 활성화</span>
+          <span class="step-tag">Step 1</span>
+        </div>
+      </div>
+
+      <form id="budget-form" class="form-grid">
+        <!-- 소득 입력 그룹 -->
+        <div class="form-group">
+          <label for="fixed-income">
+            <span class="label-icon">🏢</span> 고정 수입 (월 급여 등)
+          </label>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="fixed-income" placeholder="예: 3,000,000" required>
+            <span class="unit">원</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="variable-income">
+            <span class="label-icon">💼</span> 부수입 / 변동 수입
+          </label>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="variable-income" placeholder="예: 300,000" value="0">
+            <span class="unit">원</span>
+          </div>
+        </div>
+
+        <!-- 저축 및 고정지출 그룹 (돼지 저금통 아이콘) -->
+        <div class="form-group">
+          <label for="savings-goal">
+            <span class="label-icon">🐷</span> 목표 저축액 (돼지 저금통에 쏙!)
+          </label>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="savings-goal" placeholder="예: 1,000,000" required>
+            <span class="unit">원</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fixed-expenses">
+            <span class="label-icon">🏠</span> 필수 고정지출 (주거/보험/구독 등)
+          </label>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="fixed-expenses" placeholder="예: 800,000" required>
+            <span class="unit">원</span>
+          </div>
+        </div>
+
+        <!-- 고정지출 결제 예정일 직접 작성 & 동적 추가(+) 섹션 -->
+        <div class="form-group full-width">
+          <div class="fixed-days-header-row">
+            <label class="section-label">
+              <span class="label-icon">📌</span> 주요 고정지출 결제일 (캘린더에 결제 예정 꼬리표 자동 표시)
+            </label>
+            <button type="button" id="btn-add-fixed-day" class="btn btn-secondary btn-sm" title="고정지출 항목 추가">
+              ➕ 고정지출 추가
+            </button>
+          </div>
+          <p class="fixed-hint-sub">직접 지출명과 날짜를 입력하세요. 캘린더 해당 일자에 꼬리표가 자동으로 콕 달립니다!</p>
+          <div id="fixed-days-list" class="fixed-days-dynamic-list">
+            <!-- 자바스크립트로 동적 렌더링됩니다 -->
+          </div>
+        </div>
+
+        <!-- 소비 성향 선택 라디오 그룹 -->
+        <div class="form-group full-width">
+          <label class="section-label">
+            <span class="label-icon">⚖️</span> 소비 성향 (예산 배분 스타일)
+          </label>
+          <div class="radio-cards">
+            <label class="radio-card">
+              <input type="radio" name="spending-style" value="짠테크형">
+              <div class="radio-content">
+                <span class="radio-emoji">🌱</span>
+                <strong>짠테크형</strong>
+                <p>식비·쇼핑 최소화, 저축 극대화</p>
+              </div>
+            </label>
+            <label class="radio-card selected">
+              <input type="radio" name="spending-style" value="밸런스형" checked>
+              <div class="radio-content">
+                <span class="radio-emoji">⚖️</span>
+                <strong>밸런스형</strong>
+                <p>합리적 소비와 균형 잡힌 저축</p>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="spending-style" value="라이프스타일형">
+              <div class="radio-content">
+                <span class="radio-emoji">☕</span>
+                <strong>라이프스타일형</strong>
+                <p>여가·자기계발 중심의 가치 소비</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 결제 수단 체크박스 그룹 -->
+        <div class="form-group full-width">
+          <label class="section-label">
+            <span class="label-icon">💳</span> 주요 결제 수단 (복수 선택 가능)
+          </label>
+          <div class="chip-group" id="payment-methods-chips">
+            <label class="chip"><input type="checkbox" value="신용카드" checked> 💳 신용카드</label>
+            <label class="chip"><input type="checkbox" value="체크카드" checked> 🏦 체크카드</label>
+            <label class="chip"><input type="checkbox" value="지역화폐/페이"> 📱 지역화폐/간편결제</label>
+            <label class="chip"><input type="checkbox" value="현금"> 💵 현금/계좌이체</label>
+          </div>
+        </div>
+
+        <div class="form-actions full-width">
+          <button type="submit" id="btn-create-plan" class="btn btn-primary">
+            <span class="btn-icon">🚀</span> AI 맞춤 예산 플랜 수립하기
+          </button>
+        </div>
+      </form>
+    </section>
+
+
+    <!-- 2. 대시보드 요약 지표 카드 그리드 -->
+    <section id="dashboard-summary" class="summary-grid hidden">
+      <div class="summary-card bg-light-blue">
+        <div class="summary-icon">💵</div>
+        <div class="summary-info">
+          <span class="summary-label">월 총수입</span>
+          <h3 id="sum-total-income">0원</h3>
+        </div>
+      </div>
+
+      <div class="summary-card bg-light-purple">
+        <div class="summary-icon">🎯</div>
+        <div class="summary-info">
+          <span class="summary-label">가용 변동 예산</span>
+          <h3 id="sum-disposable-budget">0원</h3>
+        </div>
+      </div>
+
+      <div class="summary-card bg-light-green highlight-card">
+        <div class="summary-icon">📅</div>
+        <div class="summary-info">
+          <span class="summary-label">오늘 하루 권장 지출액</span>
+          <h3 id="sum-daily-recommended">0원</h3>
+          <span class="summary-sub">(한 달 30일 기준)</span>
+        </div>
+      </div>
+
+      <div class="summary-card bg-light-coral">
+        <div class="summary-icon">🛒</div>
+        <div class="summary-info">
+          <span class="summary-label">현재 누적 지출액</span>
+          <h3 id="sum-total-spent">0원</h3>
+        </div>
+      </div>
+
+      <div class="summary-card bg-light-yellow">
+        <div class="summary-icon">💼</div>
+        <div class="summary-info">
+          <span class="summary-label">남은 잔여 예산</span>
+          <h3 id="sum-remaining-budget">0원</h3>
+        </div>
+      </div>
+
+      <div class="summary-card bg-light-mint">
+        <div class="summary-icon">🐷</div>
+        <div class="summary-info">
+          <span class="summary-label">월말 저금통 예상 저축액</span>
+          <h3 id="sum-projected-savings">0원</h3>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         2-1. 스마트 가계부 캘린더 & 지출 체감 변환기 (2단 그리드)
+         ========================================================= -->
+    <section id="fun-motivation-section" class="fun-section-grid hidden">
+      
+      <!-- 1) 대박 스마트 가계부 캘린더 -->
+      <div class="card challenge-card calendar-card-full">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">🗓️</span>
+            <h2>스마트 가계부 캘린더</h2>
+          </div>
+          <div class="cal-status-badges">
+            <span id="zero-spend-count-badge" class="badge-status status-safe">🐷 무지출 0일 달성!</span>
+          </div>
+        </div>
+
+        <div class="calendar-sub-bar">
+          <div class="calendar-legends">
+            <span class="legend-item"><span class="legend-dot dot-safe"></span> 권장액 이내 (안전)</span>
+            <span class="legend-item"><span class="legend-dot dot-over"></span> 권장액 초과 (주의)</span>
+            <span class="legend-item"><span class="legend-piggy">🐷</span> 무지출</span>
+            <span class="legend-item"><span class="legend-tag-fixed">📌</span> 고정지출 꼬리표</span>
+          </div>
+          <p class="cal-hint-text">💡 날짜를 클릭하면 그날의 상세 지출 목록을 바로 확인할 수 있어요!</p>
+        </div>
+
+        <div class="calendar-wrapper">
+          <div class="calendar-header-month">
+            <span id="calendar-month-title">2026년 10월</span>
+            <span class="cal-daily-rec-info">하루 권장 지출액: <strong id="cal-daily-budget-text">0원</strong></span>
+          </div>
+          <div class="calendar-days-header">
+            <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+          </div>
+          <div id="calendar-grid" class="calendar-grid">
+            <!-- 스마트 날짜 셀 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 2) "커피 몇 잔 아꼈을까?" 지출 체감 변환기 -->
+      <div class="card challenge-card feel-card-full">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">☕</span>
+            <h2>"커피 몇 잔 아꼈을까?" 체감 변환기</h2>
+          </div>
+          <span class="step-tag">체감 시각화</span>
+        </div>
+        <p class="challenge-desc">남은 잔여 예산과 아낀 돈을 일상 속 행복으로 환산해 드려요!</p>
+
+        <div class="feel-converter-box">
+          <div class="feel-item feel-coffee">
+            <div class="feel-icon">☕</div>
+            <div class="feel-content">
+              <h4>스타벅스 아메리카노</h4>
+              <p class="feel-calc"><strong id="feel-coffee-count">0</strong>잔 마실 수 있는 여유!</p>
+              <span class="feel-price">(1잔 4,500원 기준)</span>
+            </div>
+          </div>
+
+          <div class="feel-item feel-chicken">
+            <div class="feel-icon">🍗</div>
+            <div class="feel-content">
+              <h4>바삭한 황금올리브 치킨</h4>
+              <p class="feel-calc"><strong id="feel-chicken-count">0</strong>마리 값 저축 중!</p>
+              <span class="feel-price">(1마리 20,000원 기준)</span>
+            </div>
+          </div>
+
+          <div class="feel-item feel-movie">
+            <div class="feel-icon">🎬</div>
+            <div class="feel-content">
+              <h4>CGV 영화 관람 티켓</h4>
+              <p class="feel-calc"><strong id="feel-movie-count">0</strong>편 관람 가능!</p>
+              <span class="feel-price">(1회 15,000원 기준)</span>
+            </div>
+          </div>
+
+          <div class="feel-cheer-banner">
+            <span class="cheer-emoji">💡</span>
+            <p id="feel-cheer-text">예산을 잘 지키면 다음 달 나에게 주는 선물이 풍성해져요! 🎁</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- 3. AI 맞춤 예산 계획 리포트 영역 -->
+    <section id="ai-plan-section" class="card ai-result-card hidden">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon">🧠</span>
+          <h2>Gemini 3.5 Flash Lite 예산 플랜 리포트</h2>
+        </div>
+        <div class="card-actions">
+          <button id="btn-copy-plan" class="btn btn-secondary btn-sm" title="클립보드 복사">
+            📋 복사하기
+          </button>
+          <button id="btn-download-plan" class="btn btn-secondary btn-sm" title="텍스트 파일 다운로드">
+            💾 저장하기
+          </button>
+        </div>
+      </div>
+      <div id="ai-plan-content" class="ai-content-body markdown-body">
+        <!-- AI 응답 마크다운이 렌더링되는 곳 -->
+      </div>
+    </section>
+
+
+    <!-- 4. 일일 지출 기록 및 카테고리 게이지 대시보드 (2단 그리드) -->
+    <div class="two-column-layout">
+
+      <!-- 4-1. 일일 지출 입력 & 내역 목록 -->
+      <section class="card expense-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">📝</span>
+            <h2>일일 지출 기록</h2>
+          </div>
+          <span class="step-tag">Step 2</span>
+        </div>
+
+        <form id="expense-form" class="expense-input-form">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="exp-date">날짜</label>
+              <input type="date" id="exp-date" required>
+            </div>
+            <div class="form-group flex-1">
+              <label for="exp-category">카테고리</label>
+              <select id="exp-category" required>
+                <option value="식비">🍔 식비</option>
+                <option value="교통">🚌 교통</option>
+                <option value="쇼핑">🛍️ 쇼핑</option>
+                <option value="여가/문화">🎬 여가/문화</option>
+                <option value="기타">💡 기타</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="exp-amount">금액</label>
+              <div class="input-wrapper">
+                <input type="text" inputmode="numeric" id="exp-amount" placeholder="예: 9,500" required>
+                <span class="unit">원</span>
+              </div>
+            </div>
+            <div class="form-group flex-1">
+              <label for="exp-payment">결제 수단</label>
+              <select id="exp-payment">
+                <option value="신용카드">신용카드</option>
+                <option value="체크카드">체크카드</option>
+                <option value="지역화폐/페이">지역화폐/페이</option>
+                <option value="현금">현금</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="exp-memo">소비 메모</label>
+            <input type="text" id="exp-memo" placeholder="예: 직장 점심 찌개 백반">
+          </div>
+
+          <button type="submit" class="btn btn-secondary full-width">
+            ➕ 지출 내역 추가
+          </button>
+        </form>
+
+        <!-- 지출 내역 테이블 리스트 -->
+        <div class="expense-table-container">
+          <table class="expense-table">
+            <thead>
+              <tr>
+                <th>날짜</th>
+                <th>카테고리</th>
+                <th>메모</th>
+                <th>금액</th>
+                <th>삭제</th>
+              </tr>
+            </thead>
+            <tbody id="expense-list-body">
+              <tr class="empty-row">
+                <td colspan="5">기록된 지출 내역이 아직 없습니다. 🌱</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- 4-2. 예산 소진율 게이지 바 & AI 피드백 호출 -->
+      <section class="card progress-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">📊</span>
+            <h2>실시간 예산 소진율</h2>
+          </div>
+          <span id="burn-rate-badge" class="badge-status status-safe">안전 0%</span>
+        </div>
+
+        <!-- 전체 게이지 바 -->
+        <div class="gauge-container">
+          <div class="gauge-label-row">
+            <span>전체 변동 예산 소진 현황</span>
+            <span id="burn-rate-percent">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="main-progress-bar" class="progress-bar-fill fill-safe" style="width: 0%;"></div>
+          </div>
+          <p id="burn-rate-alert" class="alert-hint">예산을 설정하고 지출을 기록하면 소진율이 실시간 계산됩니다.</p>
+        </div>
+
+        <!-- 카테고리별 소진율 프로그레스 바 목록 -->
+        <div class="category-bars-section">
+          <h3>카테고리별 지출 현황</h3>
+          <div id="category-progress-list" class="category-list">
+            <p class="placeholder-text">예산 플랜을 먼저 수립해 주세요.</p>
+          </div>
+        </div>
+
+        <!-- AI 피드백 요청 버튼 -->
+        <div class="analyze-action-box">
+          <button id="btn-analyze-expenses" class="btn btn-primary full-width" disabled>
+            🔍 AI 지출 피드백 & 월말 회고 받기
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+
+    <!-- 5. AI 지출 분석 & 월말 회고 결과 섹션 -->
+    <section id="ai-feedback-section" class="card ai-result-card hidden">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon">💡</span>
+          <h2>AI 가계부 코치의 지출 피드백 & 월말 회고</h2>
+        </div>
+        <div class="card-actions">
+          <button id="btn-copy-feedback" class="btn btn-secondary btn-sm">📋 복사하기</button>
+          <button id="btn-download-feedback" class="btn btn-secondary btn-sm">💾 저장하기</button>
+        </div>
+      </div>
+      <div id="ai-feedback-content" class="ai-content-body markdown-body">
+        <!-- AI 피드백 마크다운 렌더링 -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 플로팅 미니 계산기 위젯 -->
+  <button id="btn-floating-calc" class="floating-calc-btn" title="간편 계산기 열기">
+    🧮
+  </button>
+
+  <div id="calculator-widget" class="calc-popup-card hidden">
+    <div class="calc-header">
+      <div class="calc-title">
+        <span>🧮</span>
+        <strong>간편 계산기</strong>
+      </div>
+      <button id="btn-close-calc" class="btn-calc-close">✕</button>
+    </div>
+
+    <div class="calc-screen">
+      <div id="calc-history" class="calc-history"></div>
+      <div id="calc-display" class="calc-display">0</div>
+    </div>
+
+    <div class="calc-keypad">
+      <button class="calc-btn btn-func" data-action="clear">C</button>
+      <button class="calc-btn btn-func" data-action="backspace">⌫</button>
+      <button class="calc-btn btn-op" data-action="%">%</button>
+      <button class="calc-btn btn-op" data-action="/">÷</button>
+
+      <button class="calc-btn btn-num" data-num="7">7</button>
+      <button class="calc-btn btn-num" data-num="8">8</button>
+      <button class="calc-btn btn-num" data-num="9">9</button>
+      <button class="calc-btn btn-op" data-action="*">×</button>
+
+      <button class="calc-btn btn-num" data-num="4">4</button>
+      <button class="calc-btn btn-num" data-num="5">5</button>
+      <button class="calc-btn btn-num" data-num="6">6</button>
+      <button class="calc-btn btn-op" data-action="-">−</button>
+
+      <button class="calc-btn btn-num" data-num="1">1</button>
+      <button class="calc-btn btn-num" data-num="2">2</button>
+      <button class="calc-btn btn-num" data-num="3">3</button>
+      <button class="calc-btn btn-op" data-action="+">+</button>
+
+      <button class="calc-btn btn-num" data-num="0">0</button>
+      <button class="calc-btn btn-num" data-num="00">00</button>
+      <button class="calc-btn btn-num" data-num=".">.</button>
+      <button class="calc-btn btn-equal" data-action="=">=</button>
+    </div>
+
+    <button id="btn-apply-calc-to-expense" class="btn btn-primary btn-sm full-width calc-apply-btn">
+      📥 계산 결과를 지출 금액에 넣기
+    </button>
+  </div>
+
+  <!-- 날짜별 지출 상세 조회 팝업 모달 -->
+  <div id="date-detail-modal" class="modal-overlay hidden">
+    <div class="modal-card date-modal-card">
+      <div class="modal-header-row">
+        <h3 id="date-modal-title">📅 2026-10-04 지출 상세</h3>
+        <button id="btn-close-date-modal" class="btn-modal-close" title="닫기">✕</button>
+      </div>
+
+      <div class="date-modal-summary">
+        <div>
+          <span class="sub-txt">해당 날짜 총 지출:</span>
+          <strong id="date-modal-total">0원</strong>
+        </div>
+        <div id="date-modal-traffic" class="badge-status status-safe">하루 권장액 이내 ✅</div>
+      </div>
+
+      <div class="date-modal-list-box">
+        <ul id="date-modal-items" class="date-modal-items">
+        </ul>
+      </div>
+
+      <div class="modal-actions-row">
+        <button id="btn-set-date-to-form" class="btn btn-primary btn-sm">
+          ➕ 이 날짜에 지출 추가하기
+        </button>
+        <button id="btn-confirm-date-modal" class="btn btn-secondary btn-sm">
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI 분석 로딩 모달 -->
+  <div id="loading-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="spinner"></div>
+      <h3 id="loading-title">AI가 분석 중입니다...</h3>
+      <p id="loading-desc">Gemini 3.5 Flash Lite가 최적의 가계부 플랜을 도출하고 있습니다. 잠시만 기다려 주세요! ☕</p>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="app-footer">
+    <p>🐷 AI Smart Budget Planner • Soft Pastel Blue Theme • Password Protected</p>
+  </footer>
+
+  <!-- 메인 스크립트 -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
