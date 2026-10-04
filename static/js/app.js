@@ -447,55 +447,36 @@ document.addEventListener("DOMContentLoaded", () => {
     btnToggleMask.addEventListener("click", () => {
       state.isMasked = !state.isMasked;
 
-        const bIcon = document.getElementById("bottom-mask-icon");
-        const bLabel = document.getElementById("bottom-mask-label");
-        if (state.isMasked) {
-          btnToggleMask.innerHTML = "🙈 금액 보임";
-          btnToggleMask.classList.add("btn-masked-active");
-          btnToggleMask.title = "금액 마스킹 해제하기";
-          if (bIcon) bIcon.textContent = "🙈";
-          if (bLabel) bLabel.textContent = "보임";
+      if (state.isMasked) {
+        btnToggleMask.innerHTML = "🙈 금액 보임";
+        btnToggleMask.classList.add("btn-masked-active");
+        btnToggleMask.title = "금액 마스킹 해제하기";
 
-          document.querySelectorAll("input[inputmode='numeric']").forEach(inp => {
-            inp.type = "password";
-          });
-        } else {
-          btnToggleMask.innerHTML = "👁️ 금액 숨김";
-          btnToggleMask.classList.remove("btn-masked-active");
-          btnToggleMask.title = "지하철/카페 모드 (금액 마스킹)";
-          if (bIcon) bIcon.textContent = "👁️";
-          if (bLabel) bLabel.textContent = "숨김";
+        document.querySelectorAll("input[inputmode='numeric']").forEach(inp => {
+          inp.type = "password";
+        });
+      } else {
+        btnToggleMask.innerHTML = "👁️ 금액 숨김";
+        btnToggleMask.classList.remove("btn-masked-active");
+        btnToggleMask.title = "지하철/카페 모드 (금액 마스킹)";
 
-          document.querySelectorAll("input[inputmode='numeric']").forEach(inp => {
-            inp.type = "text";
-          });
-        }
+        document.querySelectorAll("input[inputmode='numeric']").forEach(inp => {
+          inp.type = "text";
+        });
+      }
 
-        if (state.budgetPlan) {
-          sumTotalIncome.textContent = formatWon(state.budgetPlan.total_income);
-          sumDisposable.textContent = formatWon(state.budgetPlan.disposable_budget);
-          sumDailyRecommended.textContent = formatWon(state.budgetPlan.daily_recommended);
-          if (calDailyBudgetText) calDailyBudgetText.textContent = formatWon(state.budgetPlan.daily_recommended);
-        }
-        updateCalculations();
-        renderExpenseTable();
-        renderFeelConverter();
-        renderZeroSpendCalendar();
-      });
-    }
-
-  // 모바일 전용 하단 퀵 액션바 이벤트 연동
-  const btnBottomSave = document.getElementById("btn-bottom-save");
-  const btnBottomReset = document.getElementById("btn-bottom-reset");
-  const btnBottomMask = document.getElementById("btn-bottom-mask");
-  const btnBottomCalc = document.getElementById("btn-bottom-calc");
-  const btnBottomLock = document.getElementById("btn-bottom-lock");
-
-  if (btnBottomSave && btnSaveData) btnBottomSave.addEventListener("click", () => btnSaveData.click());
-  if (btnBottomReset && btnResetData) btnBottomReset.addEventListener("click", () => btnResetData.click());
-  if (btnBottomMask && btnToggleMask) btnBottomMask.addEventListener("click", () => btnToggleMask.click());
-  if (btnBottomCalc && btnFloatingCalc) btnBottomCalc.addEventListener("click", () => btnFloatingCalc.click());
-  if (btnBottomLock && btnLockApp) btnBottomLock.addEventListener("click", () => btnLockApp.click());
+      if (state.budgetPlan) {
+        sumTotalIncome.textContent = formatWon(state.budgetPlan.total_income);
+        sumDisposable.textContent = formatWon(state.budgetPlan.disposable_budget);
+        sumDailyRecommended.textContent = formatWon(state.budgetPlan.daily_recommended);
+        if (calDailyBudgetText) calDailyBudgetText.textContent = formatWon(state.budgetPlan.daily_recommended);
+      }
+      updateCalculations();
+      renderExpenseTable();
+      renderFeelConverter();
+      renderZeroSpendCalendar();
+    });
+  }
 
   // -----------------------------------------------------------
   // 3-2. 스마트 가계부 캘린더 렌더러

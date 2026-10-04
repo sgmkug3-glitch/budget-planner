@@ -1621,148 +1621,48 @@ select:focus {
   display: none !important;
 }
 
-/* 모바일 전용 하단 퀵 액션바 (데스크톱에서는 숨김) */
-.mobile-bottom-bar {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  /* 1. 모바일 상단 헤더: 제목이 내용 안 가리도록 초슬림 단일 라인으로 극단적 축소 */
-  .app-header {
-    position: sticky;
-    top: 0;
-    z-index: 90;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  }
-
+@media (max-width: 900px) {
   .header-container {
-    padding: 6px 14px !important;
-    min-height: 40px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important; /* 상단에는 앙증맞은 앱 타이틀만 중앙 정렬 */
+    padding: 8px 14px;
+    gap: 8px;
   }
-
-  .logo-area {
-    gap: 6px !important;
-  }
-
   .logo-icon {
-    width: 24px !important;
-    height: 24px !important;
-    font-size: 14px !important;
-    border-radius: 6px !important;
-    box-shadow: none !important;
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
   }
-
   .logo-area h1 {
-    font-size: 0.95rem !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.3px;
-    margin: 0;
-    white-space: nowrap;
+    font-size: 1.05rem;
   }
-
-  /* 상단 헤더를 두껍게 만들던 모든 요소(서브제목, 뱃지, 액션 버튼들)를 모바일 상단에서 완전 제거 */
-  .subtitle,
-  .header-badge,
+  .subtitle {
+    display: none; /* 모바일에서 서브타이틀 숨김으로 헤더 비만 방지 */
+  }
+  .header-badge {
+    display: none; /* 모바일에서 텍스트 뱃지 숨김 */
+  }
   .header-right {
-    display: none !important;
+    gap: 5px;
+  }
+  .header-right .btn-sm {
+    padding: 4px 7px;
+    font-size: 0.75rem;
   }
 
-  /* 스크롤 시 더욱 슬림해지는 헤더 */
+  /* 모바일 스크롤 시 극도로 슬림해지는 헤더 */
   .app-header.header-scrolled .header-container {
-    padding: 4px 10px !important;
-    min-height: 32px !important;
+    padding: 4px 10px;
   }
-
   .app-header.header-scrolled .logo-icon {
-    width: 20px !important;
-    height: 20px !important;
-    font-size: 12px !important;
+    width: 26px;
+    height: 26px;
+    font-size: 15px;
   }
-
   .app-header.header-scrolled .logo-area h1 {
-    font-size: 0.85rem !important;
+    font-size: 0.9rem;
   }
-
-  /* 2. 모바일 전용 하단 고정 퀵 액션바 (Bottom Navigation Bar) */
-  .mobile-bottom-bar {
-    display: flex !important;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
-    z-index: 1000;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 4px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-
-  .bottom-bar-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 6px 0;
-    color: #475569;
-    transition: all 0.15s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .bottom-bar-item:active {
-    transform: scale(0.92);
-    color: var(--primary-blue);
-  }
-
-  .bottom-bar-icon {
-    font-size: 1.25rem;
-    line-height: 1;
-  }
-
-  .bottom-bar-label {
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: #64748b;
-    letter-spacing: -0.3px;
-  }
-
-  .bottom-bar-item:active .bottom-bar-label {
-    color: var(--primary-blue);
-  }
-
-  .btn-item-danger .bottom-bar-label {
-    color: #dc2626;
-  }
-
-  /* 하단 바에 내용이 가려지지 않도록 메인 컨테이너에 하단 여백 확보 */
-  body {
-    padding-bottom: 74px;
-  }
-
-  .floating-calc-btn {
-    display: none !important; /* 하단 액션바에 계산기 버튼이 있으므로 중복 플로팅 버튼 숨김 */
-  }
-
-  .calc-popup-card {
-    bottom: 64px !important;
-    right: 12px !important;
-    left: 12px !important;
-    width: auto !important;
-    max-width: 320px;
-    margin: 0 auto;
+  .app-header.header-scrolled .header-right .btn-sm {
+    padding: 3px 5px;
+    font-size: 0.72rem;
   }
 
   .form-grid,
@@ -1777,5 +1677,31 @@ select:focus {
   }
   .cal-cell {
     min-height: 64px;
+  }
+  .floating-calc-btn {
+    bottom: 18px;
+    right: 18px;
+  }
+  .calc-popup-card {
+    right: 18px;
+    bottom: 82px;
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  #btn-header-calc {
+    display: none; /* 모바일에서는 하단 플로팅 계산기 버튼이 있으므로 헤더 계산기 버튼 숨김 */
+  }
+  .logo-area h1 {
+    font-size: 0.92rem;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .app-header.header-scrolled .logo-area h1 {
+    font-size: 0.84rem;
+    max-width: 125px;
   }
 }
